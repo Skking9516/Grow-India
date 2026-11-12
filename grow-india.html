@@ -1,0 +1,418 @@
+<title>Grow India</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap">
+<style>
+/* Layout: single-column phone app. Sticky demo header, bottom tab bar, trade sheet slides over from the bottom. */
+:root{
+  --bg:#f4f6f2;--surface:#ffffff;--surface2:#e9eee7;--fg:#13201a;--muted:#58675e;--line:#d6dfd4;
+  --accent:#0b6b49;--accent-fg:#ffffff;--saffron:#b85a0a;--saffron-bg:#fdf0e1;
+  --up:#0b7f55;--down:#bf3a2c;--shadow:0 -8px 30px rgba(10,30,20,.18);
+  --font-body:'Hind','Noto Sans Devanagari',system-ui,sans-serif;
+  --font-display:'Poppins','Hind',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1411;--surface:#142019;--surface2:#1b2b22;--fg:#e8f0ea;--muted:#9bb0a3;--line:#27382e;
+  --accent:#35c28a;--accent-fg:#06150e;--saffron:#f0a35a;--saffron-bg:#2b2012;
+  --up:#3fd08f;--down:#ff7a6b;--shadow:0 -8px 30px rgba(0,0,0,.55);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1411;--surface:#142019;--surface2:#1b2b22;--fg:#e8f0ea;--muted:#9bb0a3;--line:#27382e;
+  --accent:#35c28a;--accent-fg:#06150e;--saffron:#f0a35a;--saffron-bg:#2b2012;
+  --up:#3fd08f;--down:#ff7a6b;--shadow:0 -8px 30px rgba(0,0,0,.55);color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:30}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
+.wrap{max-width:480px;margin:0 auto;min-width:0}
+.num{font-variant-numeric:tabular-nums}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));
+  padding-inline:max(16px,env(safe-area-inset-left,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:480px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px}
+.brand{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:-.01em;color:var(--accent)}
+.brand b{color:var(--saffron);font-weight:700}
+.chip{font-size:12px;font-weight:600;letter-spacing:.04em;padding:3px 10px;border-radius:99px;background:var(--saffron-bg);color:var(--saffron)}
+.demo-note{max-width:480px;margin:0 auto;padding:0 0 8px;font-size:13px;color:var(--muted)}
+
+/* auth */
+.auth{padding:28px 0 40px;display:grid;gap:20px}
+.auth h1{font-family:var(--font-display);font-size:28px;line-height:1.2;margin:0;text-wrap:balance}
+.auth p.lead{margin:6px 0 0;color:var(--muted)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border-radius:12px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;padding:10px;border-radius:9px;font-weight:600;color:var(--muted)}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.form{display:grid;gap:14px}
+label.f{display:grid;gap:6px;font-weight:600;font-size:14px}
+label.f input{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);font-size:16px;font-weight:500}
+label.f input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.hint{font-weight:400;color:var(--muted);font-size:13px}
+.err{color:var(--down);font-size:14px;min-height:1.4em;margin:0}
+.btn{border:0;background:var(--accent);color:var(--accent-fg);padding:14px 18px;border-radius:12px;font-weight:700;font-size:16px;width:100%}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:var(--surface2);color:var(--fg)}
+.btn.sm{width:auto;padding:8px 14px;font-size:14px;border-radius:10px}
+
+/* app */
+main{padding:16px 0 112px;display:grid;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.bal{background:var(--accent);color:var(--accent-fg);border:0}
+.bal small{opacity:.85}
+.bal .amt{font-family:var(--font-display);font-size:34px;font-weight:700;line-height:1.15;margin:2px 0}
+h2{font-family:var(--font-display);font-size:17px;margin:0 0 10px;font-weight:600}
+.assets{display:grid;gap:8px}
+.asset{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.asset:hover{border-color:var(--accent)}
+.badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:12px;
+  background:var(--surface2);color:var(--accent)}
+.asset .nm{font-weight:600;line-height:1.25}
+.asset .sub{font-size:13px;color:var(--muted)}
+.asset .pr{text-align:right;font-weight:600}
+.pct{font-size:13px;font-weight:600}
+.up{color:var(--up)}.down{color:var(--down)}
+.strip{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--saffron-bg);color:var(--saffron);
+  border-radius:14px;padding:12px 14px;font-weight:600;border:0;width:100%;text-align:left}
+.list{display:grid;gap:0}
+.row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);min-width:0}
+.row:first-child{border-top:0}
+.row .l{min-width:0}
+.row .l span{display:block;font-size:13px;color:var(--muted)}
+.empty{color:var(--muted);margin:0}
+.levels{display:grid;gap:10px}
+.lvl{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.lvl .pt{font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--saffron)}
+.lvl .lb{width:34px;height:34px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;font-weight:700;color:var(--accent)}
+.code{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface2);border-radius:12px;padding:12px 14px}
+.code strong{font-family:var(--font-display);font-size:22px;letter-spacing:.08em;user-select:all}
+.kv{display:grid;gap:0}
+.note{font-size:13px;color:var(--muted);margin:10px 0 0}
+a.link{color:var(--accent);font-weight:600;word-break:break-all}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
+  padding:6px max(16px,env(safe-area-inset-left,0px)) env(safe-area-inset-bottom,0px)}
+.tabs-in{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.tabs button{border:0;background:transparent;padding:10px 4px;border-radius:10px;font-weight:600;color:var(--muted);display:grid;gap:2px;justify-items:center;font-size:13px}
+.tabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-current="page"]{color:var(--accent);background:var(--surface2)}
+
+/* sheet */
+.veil{position:fixed;inset:0;z-index:40;background:rgba(5,15,10,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:480px;max-height:92%;overflow:auto;background:var(--surface);border-radius:20px 20px 0 0;box-shadow:var(--shadow);
+  padding:16px max(16px,env(safe-area-inset-left,0px)) calc(20px + env(safe-area-inset-bottom,0px))}
+.sh-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.sh-h h3{margin:0;font-family:var(--font-display);font-size:18px}
+.live{font-family:var(--font-display);font-size:26px;font-weight:700}
+.x{border:0;background:var(--surface2);width:36px;height:36px;border-radius:50%;font-size:20px;line-height:1}
+svg.spark{width:100%;height:96px;display:block;background:var(--surface2);border-radius:12px;margin:8px 0 14px}
+.dir{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 12px}
+.dir button{padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--surface);font-weight:700}
+.dir button.u[aria-pressed="true"]{border-color:var(--up);color:var(--up);background:color-mix(in srgb,var(--up) 12%,var(--surface))}
+.dir button.d[aria-pressed="true"]{border-color:var(--down);color:var(--down);background:color-mix(in srgb,var(--down) 12%,var(--surface))}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.chips button{border:1px solid var(--line);background:var(--surface2);border-radius:99px;padding:5px 14px;font-weight:600;font-size:14px}
+.cd{font-family:var(--font-display);font-size:56px;font-weight:700;line-height:1;text-align:center;margin:6px 0}
+.bar{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden;margin:10px 0 14px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .9s linear}
+.res{text-align:center;padding:10px 0 4px}
+.res .big{font-family:var(--font-display);font-size:34px;font-weight:700}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+
+<div id="app" class="wrap"></div>
+
+<script>
+/* ---- Edit these two lines to show your real help number and channel link on the Profile tab ---- */
+var CONFIG = { support: "", channel: "" };
+
+var START_BALANCE = 10000, TRADE_SECONDS = 60, POINTS = [100, 50, 30], FIXED_PCT = 4, MIN_STAKE = 1000;
+function today(){ return new Date().toDateString(); }
+var KEY = "growindia_demo_v1", memStore = null;
+
+function load(){
+  try { var s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && s.users) return s; } catch(e){ if (memStore) return memStore; }
+  return { users: {}, session: null };
+}
+var db = load();
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(db)); } catch(e){ memStore = db; } }
+function hash(s){ var h = 5381; for (var i=0;i<s.length;i++) h = ((h<<5)+h+s.charCodeAt(i))|0; return String(h); }
+function inr(n){ return "₹" + Number(n).toLocaleString("en-IN", {maximumFractionDigits:2, minimumFractionDigits:2}); }
+function price(n){ return "₹" + Number(n).toLocaleString("en-IN", {maximumFractionDigits: n<1000?2:0}); }
+function me(){ return db.session ? db.users[db.session] : null; }
+
+/* ---- simulated market ---- */
+var ASSETS = [
+  {id:"btc", sym:"BTC", name:"बिटकॉइन", base:7800000, vol:.0042},
+  {id:"eth", sym:"ETH", name:"एथेरियम", base:280000, vol:.0048},
+  {id:"gold", sym:"GLD", name:"सोना (10 ग्राम)", base:125000, vol:.0016},
+  {id:"nifty", sym:"N50", name:"निफ्टी 50", base:26000, vol:.0013},
+  {id:"crude", sym:"OIL", name:"क्रूड ऑयल", base:5600, vol:.0026},
+  {id:"usd", sym:"USD", name:"डॉलर / रुपया", base:88.5, vol:.0009}
+];
+function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2) * 1.7; }
+ASSETS.forEach(function(a){ a.open = a.base*(1+gauss()*.004); a.p = a.open; a.hist = [a.p]; for (var i=0;i<59;i++){ a.p *= 1+gauss()*a.vol; a.hist.push(a.p);} });
+function byId(id){ return ASSETS.filter(function(a){return a.id===id;})[0]; }
+function step(a){ a.p *= 1+gauss()*a.vol; a.hist.push(a.p); if (a.hist.length>60) a.hist.shift(); }
+
+/* ---- state ---- */
+var route = "home", authMode = "login", sheet = null;
+var $app = document.getElementById("app");
+
+function el(html){ var d = document.createElement("div"); d.innerHTML = html; return d.firstElementChild; }
+
+function render(){
+  var u = me();
+  if (!u){ $app.innerHTML = header() + authView(); return; }
+  var body = route==="refer" ? referView(u) : route==="profile" ? profileView(u) : homeView(u);
+  $app.innerHTML = header() + '<main>' + body + '</main>' + tabs();
+  if (sheet) drawSheet(); else paintLive();
+}
+function header(){
+  return '<div class="top"><div class="top-in"><span class="brand">Grow <b>India</b></span><span class="chip">नमूना</span></div>' +
+    '<div class="demo-note">नमूना ऐप: हर ट्रेड का नतीजा पहले से तय (+4%) है। असली बाज़ार, असली पैसा या निकासी नहीं।</div></div>';
+}
+function tabs(){
+  var t = [
+    ["home","होम",'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>'],
+    ["refer","रेफ़र",'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M17 5v6M14 8h6"/></svg>'],
+    ["profile","प्रोफ़ाइल",'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>']
+  ];
+  return '<nav class="tabs" aria-label="मुख्य मेनू"><div class="tabs-in">' + t.map(function(x){
+    return '<button data-act="tab" data-v="'+x[0]+'"'+(route===x[0]?' aria-current="page"':'')+'>'+x[2]+x[1]+'</button>';
+  }).join("") + '</div></nav>';
+}
+
+/* ---- auth ---- */
+function authView(){
+  var reg = authMode==="register";
+  return '<section class="auth"><div><h1>'+(reg?'नया खाता बनाएँ':'वापस आए, स्वागत है')+'</h1>' +
+    '<p class="lead">यह एक नमूना ऐप है। इसमें ₹10,000 का नमूना बैलेंस मिलता है, असली पैसा नहीं लगता और हर ट्रेड का नतीजा पहले से तय है।</p></div>' +
+    '<div class="seg" role="tablist"><button role="tab" data-act="mode" data-v="login" aria-selected="'+!reg+'">लॉगिन</button>' +
+    '<button role="tab" data-act="mode" data-v="register" aria-selected="'+reg+'">रजिस्टर</button></div>' +
+    '<form class="form" id="authForm" novalidate>' +
+    '<label class="f" for="phone">मोबाइल नंबर<input id="phone" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="10 अंकों का नंबर"></label>' +
+    '<label class="f" for="pass">पासवर्ड<input id="pass" type="password" autocomplete="'+(reg?'new-password':'current-password')+'" placeholder="कम से कम 6 अक्षर"></label>' +
+    (reg?'<label class="f" for="rcode">रेफ़र कोड <span class="hint">(अगर है तो)</span><input id="rcode" autocapitalize="characters" maxlength="10" placeholder="जैसे GI4K9Q2"></label>':'') +
+    '<p class="err" id="authErr" role="alert"></p>' +
+    '<button class="btn" type="submit">'+(reg?'खाता बनाएँ':'लॉगिन करें')+'</button></form>' +
+    '<p class="note">खाते की जानकारी सिर्फ़ इसी ब्राउज़र में सेव होती है।</p></section>';
+}
+function newCode(){
+  var c = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ", s;
+  do { s = "GI"; for (var i=0;i<5;i++) s += c[Math.floor(Math.random()*c.length)]; } while (codeOwner(s));
+  return s;
+}
+function codeOwner(code){ for (var k in db.users) if (db.users[k].code===code) return db.users[k]; return null; }
+function submitAuth(){
+  var phone = document.getElementById("phone").value.replace(/\D/g,""), pass = document.getElementById("pass").value;
+  var err = document.getElementById("authErr");
+  if (!/^[6-9]\d{9}$/.test(phone)) { err.textContent = "सही 10 अंकों का मोबाइल नंबर डालें।"; return; }
+  if (pass.length < 6) { err.textContent = "पासवर्ड कम से कम 6 अक्षर का होना चाहिए।"; return; }
+  if (authMode==="login"){
+    var u = db.users[phone];
+    if (!u || u.pw !== hash(pass)) { err.textContent = "नंबर या पासवर्ड ग़लत है।"; return; }
+    db.session = phone; save(); route = "home"; settleExpired(); render(); return;
+  }
+  if (db.users[phone]) { err.textContent = "यह नंबर पहले से रजिस्टर है। लॉगिन करें।"; return; }
+  var rc = (document.getElementById("rcode").value || "").trim().toUpperCase(), ref = "";
+  if (rc){ if (!codeOwner(rc)) { err.textContent = "यह रेफ़र कोड नहीं मिला। सही कोड डालें या खाली छोड़ दें।"; return; } ref = rc; }
+  db.users[phone] = { phone: phone, pw: hash(pass), code: newCode(), ref: ref, balance: START_BALANCE, points: 0, trades: [], active: null, joined: Date.now() };
+  var up = ref, lvl = 0;                       /* demo points go up three levels */
+  while (up && lvl < 3){ var o = codeOwner(up); if (!o) break; o.points += POINTS[lvl]; up = o.ref; lvl++; }
+  db.session = phone; save(); route = "home"; render();
+}
+
+/* ---- home ---- */
+function homeView(u){
+  var s = '<div class="card bal"><small>नमूना बैलेंस (नकली पैसा)</small><div class="amt num" id="balAmt">'+inr(u.balance)+'</div><small>इसे निकाला नहीं जा सकता</small></div>';
+  if (u.active){
+    var a = byId(u.active.aid);
+    s += '<button class="strip" data-act="open" data-v="'+a.id+'"><span>चल रही ट्रेड: '+a.name+'</span><span class="num" id="stripCd">'+secsLeft(u.active)+' सेकंड</span></button>';
+  }
+  s += '<div><h2>ट्रेडिंग एसेट्स</h2><div class="assets">' + ASSETS.map(function(a){
+    return '<button class="asset" data-act="open" data-v="'+a.id+'"><span class="badge">'+a.sym+'</span>' +
+      '<span><span class="nm">'+a.name+'</span><span class="sub" style="display:block">सिमुलेटेड कीमत</span></span>' +
+      '<span class="pr"><span class="num" data-pr="'+a.id+'">'+price(a.p)+'</span><br><span class="pct num" data-pc="'+a.id+'"></span></span></button>';
+  }).join("") + '</div><p class="note">कीमतें हर सेकंड सिमुलेशन से बदलती हैं, असली बाज़ार से नहीं।</p></div>';
+  s += '<div class="card"><h2>मेरी ट्रेड्स</h2>' + (u.trades.length ? '<div class="list">' + u.trades.slice(0,6).map(function(t){
+    return '<div class="row"><div class="l">'+t.name+'<span>'+'नमूना ट्रेड · दांव '+inr(t.stake)+'</span></div>' +
+      '<div class="num '+(t.pnl>=0?'up':'down')+'" style="font-weight:700">'+(t.pnl>=0?'+':'−')+inr(Math.abs(t.pnl))+'</div></div>';
+  }).join("") + '</div>' : '<p class="empty">अभी कोई ट्रेड नहीं। ऊपर से कोई एसेट चुनकर शुरू करें।</p>') + '</div>';
+  return s;
+}
+
+/* ---- refer ---- */
+function referView(u){
+  var l1 = [], l2 = [], l3 = [], k;
+  for (k in db.users) if (db.users[k].ref===u.code) l1.push(db.users[k]);
+  var c1 = l1.map(function(x){return x.code;});
+  for (k in db.users) if (c1.indexOf(db.users[k].ref)>-1) l2.push(db.users[k]);
+  var c2 = l2.map(function(x){return x.code;});
+  for (k in db.users) if (c2.indexOf(db.users[k].ref)>-1) l3.push(db.users[k]);
+  var cnt = [l1.length, l2.length, l3.length];
+  return '<div class="card"><h2>आपका रेफ़र कोड</h2><div class="code"><strong>'+u.code+'</strong><button class="btn sm" data-act="copy" data-v="'+u.code+'" id="copyBtn">कॉपी</button></div>' +
+    '<p class="note">कोई इस कोड से रजिस्टर करे तो आपको डेमो पॉइंट मिलते हैं। पॉइंट सिर्फ़ गिनती के लिए हैं, पैसा नहीं।</p></div>' +
+    '<div class="card"><h2>3 लेवल के डेमो पॉइंट</h2><div class="levels">' + [0,1,2].map(function(i){
+      return '<div class="lvl"><span class="lb">'+(i+1)+'</span><span>'+['सीधे जुड़े (लेवल 1)','लेवल 2','लेवल 3'][i]+'<br><span class="hint">'+cnt[i]+' सदस्य</span></span><span class="pt num">'+POINTS[i]+'</span></div>';
+    }).join("") + '</div></div>' +
+    '<div class="card"><small class="hint">आपके कुल डेमो पॉइंट</small><div class="num" style="font-family:var(--font-display);font-size:34px;font-weight:700;color:var(--saffron)">'+u.points+'</div></div>';
+}
+
+/* ---- profile ---- */
+function profileView(u){
+  var wins = u.trades.filter(function(t){return t.pnl>0;}).length;
+  var rate = u.trades.length ? Math.round(wins*100/u.trades.length)+"%" : "—";
+  var sup = CONFIG.support ? '<span class="num" style="font-weight:600">'+CONFIG.support+'</span>' : '<span class="hint">अभी जोड़ा नहीं गया</span>';
+  var ch = CONFIG.channel ? '<a class="link" href="'+CONFIG.channel+'" target="_blank" rel="noopener">'+CONFIG.channel+'</a>' : '<span class="hint">अभी जोड़ा नहीं गया</span>';
+  return '<div class="card kv">' +
+    '<div class="row"><div class="l">मोबाइल नंबर</div><div class="num" style="font-weight:600">+91 '+u.phone+'</div></div>' +
+    '<div class="row"><div class="l">रेफ़र कोड</div><div style="font-weight:700;letter-spacing:.06em">'+u.code+'</div></div>' +
+    '<div class="row"><div class="l">डेमो बैलेंस</div><div class="num" style="font-weight:600">'+inr(u.balance)+'</div></div>' +
+    '<div class="row"><div class="l">कुल ट्रेड / जीत का हिस्सा</div><div class="num" style="font-weight:600">'+u.trades.length+' / '+rate+'</div></div></div>' +
+    '<div class="card kv"><h2>मदद और सपोर्ट</h2>' +
+    '<div class="row"><div class="l">हेल्प सपोर्ट नंबर</div><div style="text-align:right">'+sup+'</div></div>' +
+    '<div class="row"><div class="l">ऑफ़िशियल चैनल</div><div style="text-align:right;min-width:0">'+ch+'</div></div></div>' +
+    '<button class="btn ghost" data-act="logout">लॉगआउट</button>' +
+    '<p class="note">Grow India एक नमूना (प्रोटोटाइप) ऐप है। इसमें हर ट्रेड का नतीजा दांव का 4% पहले से तय है, असली बाज़ार से कोई संबंध नहीं। असली निवेश में पैसा डूब सकता है और कोई पक्के मुनाफ़े की गारंटी नहीं दे सकता।</p>';
+}
+
+/* ---- trading ---- */
+function secsLeft(t){ return Math.max(0, Math.ceil((t.end - Date.now())/1000)); }
+function settle(u, exit){
+  var t = u.active, a = byId(t.aid);
+  var pnl = Math.round(t.stake*FIXED_PCT)/100;   /* prototype: fixed result, labelled everywhere in the UI */
+  u.balance = Math.round((u.balance + t.stake + pnl)*100)/100;
+  var rec = { name:a.name, dir:t.dir, stake:t.stake, entry:t.entry, exit:exit, pnl:pnl, at:Date.now() };
+  u.trades.unshift(rec); if (u.trades.length>30) u.trades.pop();
+  u.active = null; save(); return rec;
+}
+function settleExpired(){
+  var u = me(); if (!u || !u.active || Date.now() < u.active.end) return;
+  var a = byId(u.active.aid), p = u.active.entry;
+  for (var i=0;i<TRADE_SECONDS;i++) p *= 1+gauss()*a.vol;
+  settle(u, p);
+}
+function drawSheet(){
+  var a = byId(sheet.aid), u = me(), act = u.active, mine = act && act.aid===a.id, other = act && !mine;
+  var inner = '<div class="sh-h"><div><h3>'+a.name+'</h3><div class="live num" id="shPrice">'+price(a.p)+'</div></div><button class="x" data-act="close" aria-label="बंद करें">×</button></div>' +
+    '<div class="chip" style="display:inline-block">नमूना: नतीजा पहले से तय, असली बाज़ार नहीं</div>' +
+    '<svg class="spark" id="shSpark" viewBox="0 0 320 96" preserveAspectRatio="none" aria-hidden="true"></svg>';
+  if (sheet.result){
+    var r = sheet.result, win = r.pnl>=0;
+    inner += '<div class="res"><div class="hint">ट्रेड पूरी हुई</div><div class="big num '+(win?'up':'down')+'">'+(win?'+':'−')+inr(Math.abs(r.pnl))+'</div>' +
+      '<p class="note">नमूना नतीजा: दांव का 4%, जो इस ऐप में पहले से तय है। यह असली बाज़ार का नतीजा नहीं है।</p></div>' +
+      '<button class="btn ghost" data-act="close">ठीक है</button>';
+  } else if (mine){
+    inner += '<div class="cd num" id="shCd">'+secsLeft(act)+'</div><div class="hint" style="text-align:center">सेकंड बाकी</div>' +
+      '<div class="bar"><i id="shBar"></i></div>' +
+      '<div class="row"><div class="l">नमूना ट्रेड · दांव '+inr(act.stake)+'<span>नतीजा पहले से तय है</span></div><div class="num up" style="font-weight:700">+'+inr(act.stake*FIXED_PCT/100)+'</div></div>';
+  } else if (u.lastDay===today()){
+    inner += '<p class="empty">आज की नमूना ट्रेड हो चुकी है। अगली ट्रेड कल कर सकते हैं।</p>';
+  } else if (other){
+    inner += '<p class="empty">आपकी एक ट्रेड पहले से चल रही है। उसके पूरा होने के बाद नई ट्रेड शुरू करें।</p>';
+  } else {
+    inner += '<label class="f" for="stake">दांव की रकम (नमूना ₹, कम से कम ₹1,000)<input id="stake" inputmode="numeric" value="'+(sheet.stake||1000)+'"></label>' +
+      '<div class="chips">'+[1000,2000,5000].map(function(v){return '<button data-act="chip" data-v="'+v+'">₹'+v+'</button>';}).join("")+'</div>' +
+      '<p class="err" id="shErr" role="alert"></p>' +
+      '<button class="btn" data-act="start">60 सेकंड की ट्रेड शुरू करें</button>' +
+      '<p class="note">यह नमूना ऐप है: 60 सेकंड बाद दांव का 4% नतीजा पहले से तय है। असली ट्रेडिंग में ऐसा नहीं होता, वहाँ नुकसान भी होता है।</p>';
+  }
+  var v = document.getElementById("veil");
+  if (!v){ v = el('<div class="veil" id="veil" role="dialog" aria-modal="true"><div class="sheet" id="sheetBox"></div></div>'); document.body.appendChild(v);
+    v.addEventListener("click", function(e){ if (e.target===v) closeSheet(); }); }
+  document.getElementById("sheetBox").innerHTML = inner;
+  paintLive();
+}
+function closeSheet(){ sheet = null; var v = document.getElementById("veil"); if (v) v.remove(); }
+function spark(a, entry){
+  var h = a.hist, mn = Math.min.apply(null,h), mx = Math.max.apply(null,h);
+  if (entry){ mn = Math.min(mn, entry); mx = Math.max(mx, entry); }
+  var rg = (mx-mn) || 1, pts = h.map(function(p,i){ return (i*320/Math.max(1,h.length-1)).toFixed(1)+","+(88-(p-mn)/rg*80).toFixed(1); }).join(" ");
+  var line = entry ? '<line x1="0" x2="320" y1="'+(88-(entry-mn)/rg*80).toFixed(1)+'" y2="'+(88-(entry-mn)/rg*80).toFixed(1)+'" stroke="var(--saffron)" stroke-width="1.5" stroke-dasharray="5 4"/>' : "";
+  return line + '<polyline points="'+pts+'" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>';
+}
+function paintLive(){
+  ASSETS.forEach(function(a){
+    var p = document.querySelector('[data-pr="'+a.id+'"]'), c = document.querySelector('[data-pc="'+a.id+'"]');
+    if (p) p.textContent = price(a.p);
+    if (c){ var d = (a.p/a.open-1)*100; c.textContent = (d>=0?"+":"−")+Math.abs(d).toFixed(2)+"%"; c.className = "pct num "+(d>=0?"up":"down"); }
+  });
+  var u = me(); if (!u) return;
+  var sc = document.getElementById("stripCd"); if (sc && u.active) sc.textContent = secsLeft(u.active)+" सेकंड";
+  if (!sheet) return;
+  var a = byId(sheet.aid), act = u.active && u.active.aid===a.id ? u.active : null;
+  var sp = document.getElementById("shPrice"); if (sp) sp.textContent = price(a.p);
+  var sk = document.getElementById("shSpark"); if (sk) sk.innerHTML = spark(a, act && act.entry);
+  if (act){
+    var left = secsLeft(act), cd = document.getElementById("shCd"); if (cd) cd.textContent = left;
+    var bar = document.getElementById("shBar"); if (bar) bar.style.width = ((TRADE_SECONDS-left)/TRADE_SECONDS*100)+"%";
+    var pn = document.getElementById("shPnl");
+    if (pn){ var x = (act.dir==="up"?1:-1)*(a.p-act.entry)/act.entry*act.stake; pn.textContent = (x>=0?"+":"−")+inr(Math.abs(x)); pn.className = "num "+(x>=0?"up":"down"); }
+  }
+}
+setInterval(function(){
+  ASSETS.forEach(step);
+  var u = me();
+  if (u && u.active && Date.now() >= u.active.end){
+    var a = byId(u.active.aid), rec = settle(u, a.p);
+    if (sheet && sheet.aid===a.id) sheet.result = rec;
+    if (sheet) drawSheet();
+    if (route==="home") render();
+    var b = document.getElementById("balAmt"); if (b) b.textContent = inr(u.balance);
+  }
+  paintLive();
+}, 1000);
+
+/* ---- events ---- */
+document.addEventListener("click", function(e){
+  var b = e.target.closest("[data-act]"); if (!b) return;
+  var act = b.getAttribute("data-act"), v = b.getAttribute("data-v"), u = me();
+  if (act==="mode"){ authMode = v; render(); }
+  else if (act==="tab"){ location.hash = v; }
+  else if (act==="open"){ sheet = { aid: v, dir: "up", stake: 1000, result: null }; drawSheet(); }
+  else if (act==="close"){ closeSheet(); if (route==="home") render(); }
+  else if (act==="again"){ sheet.result = null; drawSheet(); }
+  else if (act==="chip"){ document.getElementById("stake").value = v; }
+  else if (act==="dir"){ sheet.dir = v; sheet.stake = document.getElementById("stake").value; drawSheet(); }
+  else if (act==="start"){
+    var amt = Math.floor(Number(document.getElementById("stake").value)), err = document.getElementById("shErr");
+    if (u.lastDay===today()){ err.textContent = "आज की ट्रेड हो चुकी है। कल फिर करें।"; return; }
+    if (!amt || amt < MIN_STAKE){ err.textContent = "कम से कम ₹1,000 डालें।"; return; }
+    if (amt > u.balance){ err.textContent = "डेमो बैलेंस कम है। आपके पास "+inr(u.balance)+" है।"; return; }
+    var a = byId(sheet.aid);
+    u.balance = Math.round((u.balance-amt)*100)/100;
+    u.active = { aid:a.id, dir:sheet.dir, stake:amt, entry:a.p, end:Date.now()+TRADE_SECONDS*1000 };
+    u.lastDay = today();
+    save(); drawSheet();
+    var bl = document.getElementById("balAmt"); if (bl) bl.textContent = inr(u.balance);
+  }
+  else if (act==="copy"){
+    var done = function(){ b.textContent = "कॉपी हो गया"; setTimeout(function(){ b.textContent = "कॉपी"; }, 1500); };
+    try { navigator.clipboard.writeText(v).then(done, function(){ b.textContent = "कोड को दबाकर कॉपी करें"; }); }
+    catch(x){ b.textContent = "कोड को दबाकर कॉपी करें"; }
+  }
+  else if (act==="reset"){
+    var n = document.getElementById("resetNote");
+    if (b.getAttribute("data-ok")!=="1"){ b.setAttribute("data-ok","1"); b.textContent = "हाँ, रीसेट करें"; n.textContent = "पक्का रीसेट करना है? दोबारा बटन दबाएँ।"; return; }
+    if (u.active){ n.textContent = "चल रही ट्रेड पूरी होने के बाद रीसेट करें."; b.removeAttribute("data-ok"); b.textContent = "रीसेट करें"; return; }
+    u.balance = START_BALANCE; u.trades = []; save(); render();
+  }
+  else if (act==="logout"){ closeSheet(); db.session = null; save(); render(); }
+});
+document.addEventListener("submit", function(e){ if (e.target.id==="authForm"){ e.preventDefault(); submitAuth(); } });
+function onHash(){
+  var h = (location.hash||"").replace("#","");
+  route = (h==="refer"||h==="profile") ? h : "home";
+  render();
+}
+window.addEventListener("hashchange", onHash);
+settleExpired();
+onHash();
+</script>
